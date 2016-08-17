@@ -90,3 +90,6 @@ ENV/
 
 # PyCharm
 .idea/
+
+# private settings
+private_settings.py
