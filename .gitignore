@@ -93,3 +93,6 @@ ENV/
 
 # private settings
 private_settings.py
+
+# SQLite file
+db.sqlite3
