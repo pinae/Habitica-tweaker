@@ -123,6 +123,43 @@ class HabiticaAccount:
             print(response.json())
         return response.status_code == 201
 
+    def get_todo(self, task_id):
+        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
+        return response.json()['data']
+
+    def update_todo(self,
+                    task_id,
+                    text=None,
+                    notes=None,
+                    priority=None,
+                    checklist=None,
+                    attribute=None,
+                    value=None,
+                    completed=None):
+        todo = self.get_todo(task_id)
+        if todo['type'] != 'todo':
+            return False
+        if text is not None:
+            todo['text'] = text
+        if notes is not None:
+            todo['notes'] = notes
+        if priority is not None and priority in [0.1, 1, 1.5, 2]:
+            todo['priority'] = priority
+        if checklist is not None:
+            todo['checklist'] = checklist
+        if attribute is not None:
+            todo['attribute'] = attribute
+        if value is not None:
+            todo['value'] = value
+        if completed is not None:
+            todo['completed'] = completed
+        response = requests.put('https://habitica.com/api/v3/tasks/' + task_id,
+                                json=todo,
+                                headers=self.headers)
+        if response.status_code != 200:
+            print(response.json())
+        return response.status_code == 200
+
     def get_stats(self):
         response = requests.get('https://habitica.com/api/v3/user', headers=self.headers)
         return response.json()['data']['stats']
