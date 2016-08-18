@@ -157,12 +157,35 @@ def load_all_tasks(account):
 
 def update_all_tasks(account):
     for todo in Todo.objects.all():
+        checklist = []
+        for item in todo.checklist.all():
+            checklist.append({
+                'text': item.text,
+                'completed': item.completed
+            })
         if len(todo.ids.filter(account=account).all()) > 0:
-            # update
-            pass
+            task_id = todo.ids.filter(account=account).all()[0].id
+            account.habitipy().update_todo(
+                task_id,
+                text=todo.text,
+                notes=todo.notes,
+                priority=todo.priority,
+                value=todo.value,
+                attribute=todo.attribute,
+                completed=todo.completed,
+                updated_at=todo.updated_at.isoformat(),
+                checklist=checklist
+            )
         else:
-            # create
-            pass
+            account.habitipy().create_todo(
+                text=todo.text,
+                notes=todo.notes,
+                priority=todo.priority,
+                value=todo.value,
+                attribute=todo.attribute,
+                completed=todo.completed,
+                updated_at=todo.updated_at.isoformat(),
+                checklist=checklist)
 
 
 def webhook(request):

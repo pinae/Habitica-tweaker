@@ -101,7 +101,8 @@ class HabiticaAccount:
                     checklist=False,
                     attribute='str',
                     value=False,
-                    completed=False):
+                    completed=False,
+                    updated_at=None):
         if priority not in [0.1, 1, 1.5, 2]:
             priority = 1
         new_task = {
@@ -116,6 +117,8 @@ class HabiticaAccount:
             new_task['checklist'] = checklist
         if value:
             new_task['value'] = value
+        if updated_at is not None:
+            new_task['updatedAt'] = updated_at
         response = requests.post('https://habitica.com/api/v3/tasks/user',
                                  json=[new_task],
                                  headers=self.headers)
@@ -135,7 +138,8 @@ class HabiticaAccount:
                     checklist=None,
                     attribute=None,
                     value=None,
-                    completed=None):
+                    completed=None,
+                    updated_at=None):
         todo = self.get_todo(task_id)
         if todo['type'] != 'todo':
             return False
@@ -153,6 +157,8 @@ class HabiticaAccount:
             todo['value'] = value
         if completed is not None:
             todo['completed'] = completed
+        if updated_at is not None:
+            todo['updatedAt'] = updated_at
         response = requests.put('https://habitica.com/api/v3/tasks/' + task_id,
                                 json=todo,
                                 headers=self.headers)
