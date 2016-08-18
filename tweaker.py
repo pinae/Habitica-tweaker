@@ -24,15 +24,18 @@ if __name__ == "__main__":
     import json
     #print(json.dumps(response.json(), sort_keys=True, indent=4))
     main_account = habitipy.HabiticaAccount(accounts[0][0]['USER_ID'], accounts[0][0]['API_KEY'])
-    print(json.dumps(main_account.get_tasks(), sort_keys=True, indent=4))
+    print(json.dumps(main_account.get_tasks_with_tag(main_account.get_tag_id("Arbeit")), sort_keys=True, indent=4))
+    print("--------------------------------------")
+    #print(json.dumps(main_account.get_todo("e28caace-9e45-45ab-bb98-fe6c0a511220"), indent=4))
+    #print(main_account.update_todo("e28caace-9e45-45ab-bb98-fe6c0a511220", notes=""))
     #print(json.dumps(main_account.get_current_quest(), sort_keys=True, indent=4))
     work_account = habitipy.HabiticaAccount(accounts[0][1]['USER_ID'], accounts[0][1]['API_KEY'])
     #print(json.dumps(work_account.get_current_quest(), sort_keys=True, indent=4))
     #print(not work_account.get_current_quest()['key'])
-    print(work_account.create_daily("test 1", repeat_days={'m': 0, 't': 1, 'w': 0, 'th': 1, 'f': 0, 's': 0, 'su': 0},
+    """print(work_account.create_daily("test 1", repeat_days={'m': 0, 't': 1, 'w': 0, 'th': 1, 'f': 0, 's': 0, 'su': 0},
                                     priority=0.1))
     print(work_account.create_daily("test 2", every_x=3, priority=1.5))
     print(work_account.create_habit("some habit", priority=2))
     print(work_account.create_habit("bad habit", good=False, bad=True))
-    print(work_account.create_todo("some todo", priority=1.5))
+    print(work_account.create_todo("some todo", priority=1.5))"""
 
