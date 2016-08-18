@@ -62,7 +62,8 @@ def load_all_tasks(account):
     if not account.sync_tag:
         tasks = account.habitipy().get_tasks()
     else:
-        tasks = account.habitipy().get_tasks_with_tag(account.sync_tag)
+        tasks = account.habitipy().get_tasks_with_tag(
+            account.habitipy().get_tag_id(account.sync_tag))
     for task in tasks:
         if task['type'] == 'todo':
             try:
