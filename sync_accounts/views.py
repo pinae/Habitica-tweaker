@@ -155,7 +155,20 @@ def load_all_tasks(account):
                         new_history_item.save()
 
 
+def update_all_tasks(account):
+    for todo in Todo.objects.all():
+        if len(todo.ids.filter(account=account).all()) > 0:
+            # update
+            pass
+        else:
+            # create
+            pass
+
+
 def webhook(request):
-    for account in Account.objects.all():
+    accounts = Account.objects.all()
+    for account in accounts:
         load_all_tasks(account)
+    for account in accounts:
+        update_all_tasks(account)
     return HttpResponse("OK")
