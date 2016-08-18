@@ -1,5 +1,8 @@
 from django.contrib import admin
-from.models import Account, Todo, TodoChecklistItem, TodoId, Habit, HabitId, Daily, DailyChecklistItem, DailyId
+from.models import Account
+from.models import Todo, TodoChecklistItem, TodoId
+from.models import Habit, HabitHistory, HabitId
+from.models import Daily, DailyChecklistItem, DailyHistory, DailyId
 
 
 @admin.register(Account)
@@ -9,7 +12,7 @@ class AccountAdmin(admin.ModelAdmin):
 
 @admin.register(Todo)
 class TodoAdmin(admin.ModelAdmin):
-    list_display = ('text', 'priority')
+    list_display = ('text', 'completed', 'priority')
 
 
 @admin.register(TodoChecklistItem)
@@ -27,6 +30,11 @@ class HabitAdmin(admin.ModelAdmin):
     list_display = ('text', 'priority')
 
 
+@admin.register(HabitHistory)
+class HabitHistoryAdmin(admin.ModelAdmin):
+    list_display = ('habit', 'date', 'value')
+
+
 @admin.register(HabitId)
 class HabitIdAdmin(admin.ModelAdmin):
     list_display = ('id', 'habit')
@@ -34,12 +42,17 @@ class HabitIdAdmin(admin.ModelAdmin):
 
 @admin.register(Daily)
 class DailyAdmin(admin.ModelAdmin):
-    list_display = ('text', 'priority')
+    list_display = ('text', 'completed', 'priority')
 
 
 @admin.register(DailyChecklistItem)
 class DailyChecklistItemAdmin(admin.ModelAdmin):
     list_display = ('text', 'daily')
+
+
+@admin.register(DailyHistory)
+class DailyHistoryAdmin(admin.ModelAdmin):
+    list_display = ('daily', 'date', 'value')
 
 
 @admin.register(DailyId)

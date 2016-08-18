@@ -1,5 +1,6 @@
 from django.db import models
 from habitipy import HabiticaAccount
+from datetime import datetime
 
 
 class Account(models.Model):
@@ -30,6 +31,7 @@ class Todo(models.Model):
     value = models.FloatField(default=1.0)
     attribute = models.CharField(max_length=3, default='str')
     completed = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         s = 'Todo: ' + str(self.text) + ' (' + str(self.priority) + ')'
@@ -68,9 +70,16 @@ class Habit(models.Model):
     priority = models.FloatField(default=1)
     value = models.FloatField(default=1.0)
     attribute = models.CharField(max_length=3, default='str')
+    updated_at = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return 'Habit: ' + str(self.text) + ' (' + str(self.priority) + ')'
+
+
+class HabitHistory(models.Model):
+    habit = models.ForeignKey(Habit, related_name='history')
+    date = models.IntegerField(default=0)
+    value = models.FloatField(default=1)
 
 
 class HabitId(models.Model):
@@ -90,6 +99,11 @@ class Daily(models.Model):
     attribute = models.CharField(max_length=3, default='str')
     repeat_days = models.CharField(max_length=50, blank=True)
     everyX = models.IntegerField(default=1)
+    completed = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return 'Daily: ' + str(self.text) + ' (' + str(self.priority) + ')'
 
 
 class DailyChecklistItem(models.Model):
@@ -99,6 +113,12 @@ class DailyChecklistItem(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class DailyHistory(models.Model):
+    daily = models.ForeignKey(Daily, related_name='history')
+    date = models.IntegerField(default=0)
+    value = models.FloatField(default=1)
 
 
 class DailyId(models.Model):
