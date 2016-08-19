@@ -21,13 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 try:
-    from private_settings import SECRET_KEY
+    from .private_settings import SECRET_KEY
 except ImportError:
     SECRET_KEY = 'p1+bq=^jv($w@hve%8+p*()pvvt(tbedosktrs)a&ffm(f8qam'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 try:
-    from private_settings import DEBUG
+    from .private_settings import DEBUG
 except ImportError:
     DEBUG = True
 
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'Habitica_tweaker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 try:
-    from private_settings import DATABASES
+    from .private_settings import DATABASES
 except ImportError:
     DATABASES = {
         'default': {
@@ -114,12 +114,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
 try:
-    from private_settings import LANGUAGE_CODE
+    from .private_settings import LANGUAGE_CODE
 except ImportError:
     LANGUAGE_CODE = 'de-de'
 
 try:
-    from private_settings import TIME_ZONE
+    from .private_settings import TIME_ZONE
 except ImportError:
     TIME_ZONE = 'Europe/Berlin'
 
