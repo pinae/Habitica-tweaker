@@ -20,10 +20,16 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'p1+bq=^jv($w@hve%8+p*()pvvt(tbedosktrs)a&ffm(f8qam'
+try:
+    from private_settings import SECRET_KEY
+except ImportError:
+    SECRET_KEY = 'p1+bq=^jv($w@hve%8+p*()pvvt(tbedosktrs)a&ffm(f8qam'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+try:
+    from private_settings import DEBUG
+except ImportError:
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -74,13 +80,15 @@ WSGI_APPLICATION = 'Habitica_tweaker.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+try:
+    from private_settings import DATABASES
+except ImportError:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
 
 
 # Password validation
@@ -105,9 +113,15 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'de-de'
+try:
+    from private_settings import LANGUAGE_CODE
+except ImportError:
+    LANGUAGE_CODE = 'de-de'
 
-TIME_ZONE = 'Europe/Berlin'
+try:
+    from private_settings import TIME_ZONE
+except ImportError:
+    TIME_ZONE = 'Europe/Berlin'
 
 USE_I18N = True
 
