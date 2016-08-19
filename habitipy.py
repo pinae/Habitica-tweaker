@@ -28,6 +28,17 @@ class HabiticaAccount:
                 task_list.append(task)
         return task_list
 
+    def score_task(self, task_id, down=False):
+        direction = 'up'
+        if down:
+            direction = 'down'
+        response = requests.post('https://habitica.com/api/v3/tasks/' + task_id + '/score/' + direction,
+                                 headers=self.headers)
+        print(response.json())
+        if response.status_code != 200:
+            print(response.json())
+        return response.status_code == 200
+
     def create_daily(self,
                      text,
                      repeat_days=False,
