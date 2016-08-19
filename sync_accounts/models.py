@@ -18,7 +18,7 @@ class Account(models.Model):
         return HabiticaAccount(self.user_id, self.api_key)
 
     def __str__(self):
-        s = self.user_id + 'Sync: '
+        s = self.user_id + ' Sync: '
         if self.is_main():
             s += 'all'
         else:
