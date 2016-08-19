@@ -1,4 +1,6 @@
-from django.shortcuts import render
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+from __future__ import division, print_function, unicode_literals
 
 
 def fuck_my_life(account):
