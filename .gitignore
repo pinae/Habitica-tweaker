@@ -97,3 +97,6 @@ Habitica_tweaker/private_settings.py
 
 # SQLite file
 db.sqlite3
+
+# static file
+static/
