@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 from .models import Account
 from .models import Todo, TodoId, TodoChecklistItem
 from .models import Habit, HabitHistory, HabitId
@@ -189,6 +190,7 @@ def update_all_tasks(account):
                 checklist=checklist)
 
 
+@csrf_exempt
 def webhook(request):
     with open("request.log", 'w') as f:
         f.write(request.method)
@@ -197,7 +199,8 @@ def webhook(request):
         if user.accounts.count() >= 2:
             accounts = user.accounts.all()
             for account in accounts:
-                load_all_tasks(account)
+                pass
+                # load_all_tasks(account)
             for account in accounts:
                 # update_all_tasks(account)
                 pass
