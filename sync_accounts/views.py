@@ -190,11 +190,15 @@ def update_all_tasks(account):
 
 
 def webhook(request):
+    with open("request.log", 'w') as f:
+        f.write(request.method)
+        f.write(str(request.read(), encoding='utf-8'))
     for user in User.objects.all():
         if user.accounts.count() >= 2:
             accounts = user.accounts.all()
             for account in accounts:
                 load_all_tasks(account)
             for account in accounts:
-                update_all_tasks(account)
+                # update_all_tasks(account)
+                pass
     return HttpResponse("OK")
