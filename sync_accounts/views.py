@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.contrib.auth.models import User
 from .models import Account
 from .models import Todo, TodoId, TodoChecklistItem
 from .models import Habit, HabitHistory, HabitId
@@ -189,9 +190,11 @@ def update_all_tasks(account):
 
 
 def webhook(request):
-    accounts = Account.objects.all()
-    for account in accounts:
-        load_all_tasks(account)
-    for account in accounts:
-        update_all_tasks(account)
+    for user in User.objects.all():
+        if user.accounts.count() >= 2:
+            accounts = user.accounts.all()
+            for account in accounts:
+                load_all_tasks(account)
+            for account in accounts:
+                update_all_tasks(account)
     return HttpResponse("OK")
