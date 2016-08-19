@@ -192,18 +192,28 @@ def update_all_tasks(account):
 
 @csrf_exempt
 def webhook(request):
-    status_data = json.loads(str(request.read(), encoding='utf-8'))
     try:
-        account = Account.objects.get(user_id=status_data['userId'])
-        if account.django_user.accounts.count() >= 2:
-            accounts = account.django_user.accounts.all()
-            for account in accounts:
-                load_all_tasks(account)
-            for account in accounts:
-                # update_all_tasks(account)
-                pass
-    except Account.DoesNotExist:
-        pass
+        status_data = json.loads(str(request.read(), encoding='utf-8'))
+        try:
+            account = Account.objects.get(user_id=status_data['userId'])
+            if account.django_user.accounts.count() >= 2:
+                accounts = account.django_user.accounts.all()
+                for account in accounts:
+                    load_all_tasks(account)
+                for account in accounts:
+                    # update_all_tasks(account)
+                    pass
+        except Account.DoesNotExist:
+            pass
+    except json.JSONDecodeError:
+        for user in User.objects.all():
+            if user.accounts.count() >= 2:
+                accounts = user.accounts.all()
+                for account in accounts:
+                    load_all_tasks(account)
+                for account in accounts:
+                    # update_all_tasks(account)
+                    pass
     # with open("request.log", 'w') as f:
     #    f.write(request.method)
     #    f.write(str(request.read(), encoding='utf-8'))
