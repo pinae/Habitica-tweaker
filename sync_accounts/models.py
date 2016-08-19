@@ -1,6 +1,7 @@
 from django.db import models
 from habitipy import HabiticaAccount
 from datetime import datetime
+from django.contrib.auth.models import User
 
 
 class Account(models.Model):
@@ -8,6 +9,7 @@ class Account(models.Model):
     api_key = models.CharField(max_length=50)
     cron_time = models.TimeField(blank=True)
     sync_tag = models.CharField(max_length=50, default='', blank=True)
+    django_user = models.ForeignKey(User, related_name='accounts')
 
     def is_main(self):
         return self.sync_tag == ''
