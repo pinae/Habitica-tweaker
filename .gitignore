@@ -93,6 +93,7 @@ ENV/
 
 # private settings
 private_settings.py
+Habitica_tweaker/private_settings.py
 
 # SQLite file
 db.sqlite3
