@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 from __future__ import division, print_function, unicode_literals
-import requests, json
+import requests
 
 
 class HabiticaAccount:
@@ -197,4 +197,10 @@ class HabiticaAccount:
         response = requests.post('https://habitica.com/api/v3/groups/party/chat',
                                  json={"message": message},
                                  headers=self.headers)
+        return response.status_code == 200
+
+    def set_hp(self, hp):
+        response = requests.put('https://habitica.com/api/v3/user',
+                                json={"stats.hp": hp},
+                                headers=self.headers)
         return response.status_code == 200
