@@ -7,7 +7,7 @@ from.models import Daily, DailyChecklistItem, DailyHistory, DailyId
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
-    list_display = ('user_id', 'sync_tag')
+    list_display = ('user_id', 'django_user', 'sync_tag')
 
 
 @admin.register(Todo)
