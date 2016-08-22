@@ -119,7 +119,7 @@ class DailyChecklistItem(models.Model):
 
 class DailyHistory(models.Model):
     daily = models.ForeignKey(Daily, related_name='history')
-    date = models.IntegerField(default=0)
+    date = models.BigIntegerField(default=0)
     value = models.FloatField(default=1)
 
 
