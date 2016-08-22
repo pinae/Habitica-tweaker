@@ -99,7 +99,7 @@ class Daily(models.Model):
     priority = models.FloatField(default=1)
     value = models.FloatField(default=1.0)
     attribute = models.CharField(max_length=3, default='str')
-    repeat_days = models.CharField(max_length=80, blank=True)
+    repeat_days = models.CharField(max_length=90, blank=True)
     everyX = models.IntegerField(default=1)
     completed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(default=datetime.now)
