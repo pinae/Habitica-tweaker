@@ -80,7 +80,7 @@ class Habit(models.Model):
 
 class HabitHistory(models.Model):
     habit = models.ForeignKey(Habit, related_name='history')
-    date = models.IntegerField(default=0)
+    date = models.BigIntegerField(default=0)
     value = models.FloatField(default=1)
 
 
