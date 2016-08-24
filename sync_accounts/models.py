@@ -80,7 +80,7 @@ class Habit(models.Model):
 
 class HabitHistory(models.Model):
     habit = models.ForeignKey(Habit, related_name='history')
-    date = models.IntegerField(default=0)
+    date = models.BigIntegerField(default=0)
     value = models.FloatField(default=1)
 
 
@@ -99,7 +99,7 @@ class Daily(models.Model):
     priority = models.FloatField(default=1)
     value = models.FloatField(default=1.0)
     attribute = models.CharField(max_length=3, default='str')
-    repeat_days = models.CharField(max_length=80, blank=True)
+    repeat_days = models.CharField(max_length=90, blank=True)
     everyX = models.IntegerField(default=1)
     completed = models.BooleanField(default=False)
     updated_at = models.DateTimeField(default=datetime.now)
@@ -119,7 +119,7 @@ class DailyChecklistItem(models.Model):
 
 class DailyHistory(models.Model):
     daily = models.ForeignKey(Daily, related_name='history')
-    date = models.IntegerField(default=0)
+    date = models.BigIntegerField(default=0)
     value = models.FloatField(default=1)
 
 
