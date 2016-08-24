@@ -15,4 +15,4 @@ class Command(BaseCommand):
         for account in Account.objects.all():
             accounts_hp[account] = account.habitipy().get_stats()['hp']
         for account in Account.objects.all():
-            fuck_my_life(account)
+            fuck_my_life(account, accounts_hp)
