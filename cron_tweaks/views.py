@@ -3,13 +3,19 @@
 from __future__ import division, print_function, unicode_literals
 
 
-def fuck_my_life(account):
-    current_hp = account.habitipy().get_stats()['hp']
+def fuck_my_life(account, accounts_hp=None):
+    if accounts_hp is not None and account in accounts_hp:
+        current_hp = accounts_hp[account]
+    else:
+        current_hp = account.habitipy().get_stats()['hp']
     tasks = account.habitipy().get_tasks()
     for task in tasks:
         if task['text'] == "Fuck my life!":
+            if task['notes'].split(':')[0] == "relaxed":
+                if not account.habitipy().get_current_quest()['key'] is None:
+                    break
             try:
-                target = int(task['notes'])
+                target = int(task['notes'].split(':')[-1])
                 if current_hp > target:
                     account.habitipy().set_hp(target)
                     break

@@ -11,5 +11,8 @@ class Command(BaseCommand):
            'till the hp are below the number in the notes.'
 
     def handle(self, *args, **options):
+        accounts_hp = {}
+        for account in Account.objects.all():
+            accounts_hp[account] = account.habitipy().get_stats()['hp']
         for account in Account.objects.all():
             fuck_my_life(account)
