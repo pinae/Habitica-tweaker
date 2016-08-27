@@ -205,7 +205,7 @@ def update_all_habits(account):
                 score_count.append(item.value)
         if len(habit.ids.filter(account=account).all()) > 0:
             task_id = habit.ids.filter(account=account).all()[0].id
-            history = account.habitipy().get_task(task_id)['history']
+            history = account.habitipy().get_task(task_id)['checklist']
             for item in history:
                 if item['date'] > daybreak:
                     score_count.pop(score_count.index(float(item['value'])))
