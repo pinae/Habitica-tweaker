@@ -47,7 +47,7 @@ def update_daily(daily, task_dict):
     daily.priority = task_dict['priority']
     daily.value = task_dict['value']
     daily.attribute = task_dict['attribute']
-    daily.everyX = task_dict['everyX'],
+    daily.everyX = int(task_dict['everyX']),
     daily.repeat_days = json.dumps(task_dict['repeat'])
     daily.updated_at = time_parser.parse(task_dict['updatedAt'])
     daily.save()
