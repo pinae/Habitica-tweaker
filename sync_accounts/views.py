@@ -168,7 +168,22 @@ def update_all_todos(account):
             })
         if len(todo.ids.filter(account=account).all()) > 0:
             task_id = todo.ids.filter(account=account).all()[0].id
-            if not account.habitipy().get_task(task_id)['completed'] and todo.completed:
+            task_data = account.habitipy().get_task(task_id)
+            if 'success' in task_data and not task_data['success']:
+                todo.ids.filter(account=account).all().delete()
+                new_task = account.habitipy().create_todo(
+                    text=todo.text,
+                    notes=todo.notes,
+                    priority=todo.priority,
+                    value=todo.value,
+                    attribute=todo.attribute,
+                    completed=False,
+                    updated_at=todo.updated_at.isoformat(),
+                    checklist=checklist)
+                id_obj = TodoId(id=new_task['id'], account=account, todo=todo)
+                id_obj.save()
+                task_id = id_obj.id
+            if not task_data['completed'] and todo.completed:
                 account.habitipy().score_task(task_id, down=False)
             account.habitipy().update_todo(
                 task_id,
@@ -207,6 +222,7 @@ def update_all_habits(account):
             task_id = habit.ids.filter(account=account).all()[0].id
             task_data = account.habitipy().get_task(task_id)
             if 'success' in task_data and not task_data['success']:
+                habit.ids.filter(account=account).all().delete()
                 new_task = account.habitipy().create_habit(
                     text=habit.text,
                     good=habit.good,
@@ -216,10 +232,9 @@ def update_all_habits(account):
                     attribute=habit.attribute,
                     value=habit.value
                 )
-                habit_id = habit.ids.filter(account=account).all()[0]
-                habit_id.id = new_task['id']
-                task_id = new_task['id']
-                habit_id.save()
+                id_obj = HabitId(id=new_task['id'], account=account, habit=habit)
+                id_obj.save()
+                task_id = id_obj.id
             elif 'checklist' in task_data:
                 history = account.habitipy().get_task(task_id)['checklist']
                 for item in history:
@@ -266,7 +281,25 @@ def update_all_dailies(account):
             })
         if len(daily.ids.filter(account=account).all()) > 0:
             task_id = daily.ids.filter(account=account).all()[0].id
-            if not account.habitipy().get_task(task_id)['completed'] and daily.completed:
+            task_data = account.habitipy().get_task(task_id)
+            if 'success' in task_data and not task_data['success']:
+                daily.ids.filter(account=account).all().delete()
+                new_task = account.habitipy().create_todo(
+                    text=daily.text,
+                    repeat_days=daily.repeat_days,
+                    every_x=daily.everyX,
+                    checklist=checklist,
+                    notes=daily.notes,
+                    priority=daily.priority,
+                    attribute=daily.attribute,
+                    value=daily.value,
+                    completed=False,
+                    updated_at=daily.updated_at.isoformat(),
+                    history=history)
+                id_obj = DailyId(id=new_task['id'], account=account, daily=daily)
+                id_obj.save()
+                task_id = id_obj.id
+            if not task_data['completed'] and daily.completed:
                 account.habitipy().score_task(task_id, down=False)
             account.habitipy().update_daily(
                 task_id,
@@ -312,9 +345,8 @@ def webhook(request):
         try:
             account = Account.objects.get(user_id=status_data['userId'])
             if account.django_user.accounts.count() >= 2:
-                accounts = account.django_user.accounts.all()
-                for account in accounts:
-                    load_all_tasks(account)
+                accounts = account.django_user.accounts.exclude(user_id=status_data['userId']).all()
+                load_all_tasks(account)
                 for account in accounts:
                     update_all_tasks(account)
         except Account.DoesNotExist:
