@@ -310,9 +310,5 @@ def webhook(request):
                 for account in accounts:
                     load_all_tasks(account)
                 for account in accounts:
-                    # update_all_tasks(account)
-                    pass
-    # with open("request.log", 'w') as f:
-    #    f.write(request.method)
-    #    f.write(str(request.read(), encoding='utf-8'))
+                    update_all_tasks(account)
     return HttpResponse("OK")
