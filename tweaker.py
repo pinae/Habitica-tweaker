@@ -27,7 +27,7 @@ if __name__ == "__main__":
     #print(json.dumps(main_account.get_tasks_with_tag(main_account.get_tag_id("Arbeit")), sort_keys=True, indent=4))
     #print(json.dumps(main_account.get_task("497c993a-1f41-4f20-88fd-99620a7b9215"), sort_keys=True, indent=4))
     print("--------------------------------------")
-    print(json.dumps(main_account.get_task("e28caace-9e45-45ab-bb98-fe6c0a511220"), indent=4))
+    print(json.dumps(main_account.get_task("d90b363e-8529-4d65-8dc3-29ad9922ed8d"), indent=4))
     #print(main_account.update_todo("e28caace-9e45-45ab-bb98-fe6c0a511220", notes=""))
     #print(json.dumps(main_account.get_current_quest(), sort_keys=True, indent=4))
     work_account = habitipy.HabiticaAccount(accounts[0][1]['USER_ID'], accounts[0][1]['API_KEY'])

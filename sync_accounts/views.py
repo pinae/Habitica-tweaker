@@ -218,22 +218,23 @@ def update_all_habits(account):
                 )
                 habit_id = habit.ids.filter(account=account).all()[0]
                 habit_id.id = new_task['id']
+                task_id = new_task['id']
                 habit_id.save()
             elif 'checklist' in task_data:
                 history = account.habitipy().get_task(task_id)['checklist']
-            for item in history:
-                if item['date'] > daybreak:
-                    score_count.pop(score_count.index(float(item['value'])))
-            account.habitipy().update_habit(
-                task_id,
-                text=habit.text,
-                good=habit.good,
-                bad=habit.bad,
-                notes=habit.notes,
-                priority=habit.priority,
-                attribute=habit.attribute,
-                value=habit.value
-            )
+                for item in history:
+                    if item['date'] > daybreak:
+                        score_count.pop(score_count.index(float(item['value'])))
+                account.habitipy().update_habit(
+                    task_id,
+                    text=habit.text,
+                    good=habit.good,
+                    bad=habit.bad,
+                    notes=habit.notes,
+                    priority=habit.priority,
+                    attribute=habit.attribute,
+                    value=habit.value
+                )
         else:
             new_task = account.habitipy().create_habit(
                 text=habit.text,
