@@ -205,7 +205,22 @@ def update_all_habits(account):
                 score_count.append(item.value)
         if len(habit.ids.filter(account=account).all()) > 0:
             task_id = habit.ids.filter(account=account).all()[0].id
-            history = account.habitipy().get_task(task_id)['checklist']
+            task_data = account.habitipy().get_task(task_id)
+            if 'success' in task_data and not task_data['success']:
+                new_task = account.habitipy().create_habit(
+                    text=habit.text,
+                    good=habit.good,
+                    bad=habit.bad,
+                    notes=habit.notes,
+                    priority=habit.priority,
+                    attribute=habit.attribute,
+                    value=habit.value
+                )
+                habit_id = habit.ids.filter(account=account).all()[0]
+                habit_id.id = new_task['id']
+                habit_id.save()
+            elif 'checklist' in task_data:
+                history = account.habitipy().get_task(task_id)['checklist']
             for item in history:
                 if item['date'] > daybreak:
                     score_count.pop(score_count.index(float(item['value'])))
