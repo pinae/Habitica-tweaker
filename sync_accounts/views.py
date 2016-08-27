@@ -5,6 +5,7 @@ from .models import Account
 from .models import Todo, TodoId, TodoChecklistItem
 from .models import Habit, HabitHistory, HabitId
 from .models import Daily, DailyId, DailyChecklistItem, DailyHistory
+from datetime import datetime
 import dateutil.parser as time_parser
 import json
 
@@ -157,7 +158,7 @@ def load_all_tasks(account):
                         new_history_item.save()
 
 
-def update_all_tasks(account):
+def update_all_todos(account):
     for todo in Todo.objects.all():
         checklist = []
         for item in todo.checklist.all():
@@ -167,6 +168,8 @@ def update_all_tasks(account):
             })
         if len(todo.ids.filter(account=account).all()) > 0:
             task_id = todo.ids.filter(account=account).all()[0].id
+            if not account.habitipy().get_task(task_id)['completed'] and todo.completed:
+                account.habitipy().score_task(task_id, down=False)
             account.habitipy().update_todo(
                 task_id,
                 text=todo.text,
@@ -179,15 +182,111 @@ def update_all_tasks(account):
                 checklist=checklist
             )
         else:
-            account.habitipy().create_todo(
+            new_task = account.habitipy().create_todo(
                 text=todo.text,
                 notes=todo.notes,
                 priority=todo.priority,
                 value=todo.value,
                 attribute=todo.attribute,
-                completed=todo.completed,
+                completed=False,
                 updated_at=todo.updated_at.isoformat(),
                 checklist=checklist)
+            if todo.completed:
+                account.habitipy().score_task(new_task['id'], down=False)
+
+
+def update_all_habits(account):
+    for habit in Habit.objects.all():
+        score_count = []
+        today = datetime.now().date()
+        daybreak = datetime(today.year, today.month, today.day, hour=5).timestamp()
+        for item in habit.history.all():
+            if item.date > daybreak:
+                score_count.append(item.value)
+        if len(habit.ids.filter(account=account).all()) > 0:
+            task_id = habit.ids.filter(account=account).all()[0].id
+            history = account.habitipy().get_task(task_id)['history']
+            for item in history:
+                if item['date'] > daybreak:
+                    score_count.pop(score_count.index(float(item['value'])))
+            account.habitipy().update_habit(
+                task_id,
+                text=habit.text,
+                good=habit.good,
+                bad=habit.bad,
+                notes=habit.notes,
+                priority=habit.priority,
+                attribute=habit.attribute,
+                value=habit.value
+            )
+        else:
+            new_task = account.habitipy().create_habit(
+                text=habit.text,
+                good=habit.good,
+                bad=habit.bad,
+                notes=habit.notes,
+                priority=habit.priority,
+                attribute=habit.attribute,
+                value=habit.value
+            )
+            task_id = new_task['id']
+        for i in score_count:
+            account.habitipy().score_task(task_id, down=i < 0)
+
+
+def update_all_dailies(account):
+    for daily in Daily.objects.all():
+        checklist = []
+        for item in daily.checklist.all():
+            checklist.append({
+                'text': item.text,
+                'completed': item.completed
+            })
+        history = []
+        for item in daily.history.all():
+            history.append({
+                'date': item.date,
+                'value': item.value
+            })
+        if len(daily.ids.filter(account=account).all()) > 0:
+            task_id = daily.ids.filter(account=account).all()[0].id
+            if not account.habitipy().get_task(task_id)['completed'] and daily.completed:
+                account.habitipy().score_task(task_id, down=False)
+            account.habitipy().update_daily(
+                task_id,
+                text=daily.text,
+                repeat_days=daily.repeat_days,
+                every_x=daily.everyX,
+                checklist=checklist,
+                notes=daily.notes,
+                priority=daily.priority,
+                attribute=daily.attribute,
+                value=daily.value,
+                completed=daily.completed,
+                updated_at=daily.updated_at.isoformat(),
+                history=history
+            )
+        else:
+            new_task = account.habitipy().create_todo(
+                text=daily.text,
+                repeat_days=daily.repeat_days,
+                every_x=daily.everyX,
+                checklist=checklist,
+                notes=daily.notes,
+                priority=daily.priority,
+                attribute=daily.attribute,
+                value=daily.value,
+                completed=False,
+                updated_at=daily.updated_at.isoformat(),
+                history=history)
+            if daily.completed:
+                account.habitipy().score_task(new_task['id'], down=False)
+
+
+def update_all_tasks(account):
+    update_all_todos(account)
+    update_all_habits(account)
+    update_all_dailies(account)
 
 
 @csrf_exempt
@@ -201,8 +300,7 @@ def webhook(request):
                 for account in accounts:
                     load_all_tasks(account)
                 for account in accounts:
-                    # update_all_tasks(account)
-                    pass
+                    update_all_tasks(account)
         except Account.DoesNotExist:
             pass
     except json.JSONDecodeError:

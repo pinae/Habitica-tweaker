@@ -28,6 +28,10 @@ class HabiticaAccount:
                 task_list.append(task)
         return task_list
 
+    def get_task(self, task_id):
+        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
+        return response.json()['data']
+
     def score_task(self, task_id, down=False):
         direction = 'up'
         if down:
@@ -47,7 +51,10 @@ class HabiticaAccount:
                      notes='',
                      priority=1,
                      attribute='str',
-                     value=1.947771358054911):
+                     value=1.947771358054911,
+                     completed=False,
+                     updated_at=None,
+                     history=None):
         if priority not in [0.1, 1, 1.5, 2]:
             priority = 1
         new_task = {
@@ -56,6 +63,7 @@ class HabiticaAccount:
             'priority': priority,
             'attribute': attribute,
             'value': value,
+            'completed': completed,
             'type': 'daily'
         }
         if checklist:
@@ -69,12 +77,88 @@ class HabiticaAccount:
             new_task['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True,
                                   's': True, 'su': True}
             new_task['frequency'] = 'daily'
+        if updated_at is not None:
+            new_task['updatedAt'] = updated_at
+        if history is not None:
+            history = []
+            for item in history:
+                if 'date' in item:
+                    item_value = 1.0
+                    if 'value' in item and type(item['value']) == float:
+                        item_value = item['value']
+                    history.append({
+                        'date': item['date'],
+                        'value': item_value
+                    })
+            new_task['history'] = history
         response = requests.post('https://habitica.com/api/v3/tasks/user',
                                  json=[new_task],
                                  headers=self.headers)
         if response.status_code != 201:
             print(response.json())
-        return response.status_code == 201
+        return response.json()['data']
+
+    def get_daily(self, task_id):
+        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
+        return response.json()['data']
+
+    def update_daily(self,
+                     task_id,
+                     text=None,
+                     repeat_days=None,
+                     every_x=None,
+                     checklist=None,
+                     notes=None,
+                     priority=None,
+                     attribute=None,
+                     value=None,
+                     completed=None,
+                     updated_at=None,
+                     history=None):
+        daily = self.get_daily(task_id)
+        if text is not None:
+            daily['text'] = text
+        if notes is not None:
+            daily['notes'] = notes
+        if priority is not None and priority in [0.1, 1, 1.5, 2]:
+            daily['priority'] = priority
+        if checklist is not None:
+            daily['checklist'] = checklist
+        if repeat_days is not None:
+            daily['everyX'] = 1
+            daily['repeat'] = repeat_days
+            daily['frequency'] = 'weekly'
+        elif every_x is not None:
+            daily['everyX'] = every_x
+            daily['repeat'] = {'m': True, 't': True, 'w': True, 'th': True, 'f': True,
+                               's': True, 'su': True}
+            daily['frequency'] = 'daily'
+        if updated_at is not None:
+            daily['updatedAt'] = updated_at
+        if history is not None:
+            history = []
+            for item in history:
+                if 'date' in item:
+                    item_value = 1.0
+                    if 'value' in item and type(item['value']) == float:
+                        item_value = item['value']
+                    history.append({
+                        'date': item['date'],
+                        'value': item_value
+                    })
+            daily['history'] = history
+        if attribute is not None:
+            daily['attribute'] = attribute
+        if value is not None:
+            daily['value'] = value
+        if completed is not None and type(completed) == bool:
+            daily['completed'] = completed
+        response = requests.put('https://habitica.com/api/v3/tasks/' + task_id,
+                                json=daily,
+                                headers=self.headers)
+        if response.status_code != 200:
+            print(response.json())
+        return response.status_code == 200
 
     def create_habit(self,
                      text,
@@ -103,7 +187,50 @@ class HabiticaAccount:
                                  headers=self.headers)
         if response.status_code != 201:
             print(response.json())
-        return response.status_code == 201
+        return response.json()['data']
+
+    def get_habit(self, task_id):
+        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
+        return response.json()['data']
+
+    def update_habit(self,
+                     task_id,
+                     text=None,
+                     good=None,
+                     bad=None,
+                     notes=None,
+                     priority=None,
+                     attribute=None,
+                     value=None):
+        habit = self.get_habit(task_id)
+        if habit['type'] != 'habit':
+            return False
+        if text is not None:
+            habit['text'] = text
+        if notes is not None:
+            habit['notes'] = notes
+        if priority is not None and priority in [0.1, 1, 1.5, 2]:
+            habit['priority'] = priority
+        if good is not None and type(good) == bool:
+            if not habit['bad'] and not good:
+                habit['good'] = True
+            else:
+                habit['good'] = good
+        if bad is not None and type(bad) == bool:
+            if not habit['good'] and not bad:
+                habit['bad'] = True
+            else:
+                habit['bad'] = bad
+        if attribute is not None:
+            habit['attribute'] = attribute
+        if value is not None:
+            habit['value'] = value
+        response = requests.put('https://habitica.com/api/v3/tasks/' + task_id,
+                                json=habit,
+                                headers=self.headers)
+        if response.status_code != 200:
+            print(response.json())
+        return response.status_code == 200
 
     def create_todo(self,
                     text,
@@ -135,7 +262,7 @@ class HabiticaAccount:
                                  headers=self.headers)
         if response.status_code != 201:
             print(response.json())
-        return response.status_code == 201
+        return response.json()['data']
 
     def get_todo(self, task_id):
         response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
