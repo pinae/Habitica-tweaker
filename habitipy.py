@@ -30,7 +30,10 @@ class HabiticaAccount:
 
     def get_task(self, task_id):
         response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
-        return response.json()['data']
+        if 'data' in response.json():
+            return response.json()['data']
+        else:
+            return response.json()
 
     def score_task(self, task_id, down=False):
         direction = 'up'
@@ -99,8 +102,7 @@ class HabiticaAccount:
         return response.json()['data']
 
     def get_daily(self, task_id):
-        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
-        return response.json()['data']
+        return self.get_task(task_id)
 
     def update_daily(self,
                      task_id,
@@ -190,8 +192,7 @@ class HabiticaAccount:
         return response.json()['data']
 
     def get_habit(self, task_id):
-        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
-        return response.json()['data']
+        return self.get_task(task_id)
 
     def update_habit(self,
                      task_id,
@@ -265,8 +266,7 @@ class HabiticaAccount:
         return response.json()['data']
 
     def get_todo(self, task_id):
-        response = requests.get('https://habitica.com/api/v3/tasks/' + task_id, headers=self.headers)
-        return response.json()['data']
+        return self.get_task(task_id)
 
     def update_todo(self,
                     task_id,
