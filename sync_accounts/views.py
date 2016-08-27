@@ -50,9 +50,9 @@ def update_daily(daily, task_dict):
     daily.everyX = task_dict['everyX'],
     daily.repeat_days = json.dumps(task_dict['repeat'])
     daily.updated_at = time_parser.parse(task_dict['updatedAt'])
+    daily.save()
     daily.checklist.all().delete()
     daily.history.all().delete()
-    daily.save()
     for item in task_dict['checklist']:
         new_item = DailyChecklistItem(daily=daily, text=item['text'], completed=item['completed'])
         new_item.save()
